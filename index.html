@@ -1107,38 +1107,38 @@
       localStorage.setItem("ticketflow_purchase", JSON.stringify(purchaseData));
 
       // --- CAMBIO: Enviar datos a Google Sheets antes de redirigir ---
-      const GOOGLE_SCRIPT_URL = "PEGAR_TU_URL_AQUI"; // Deberás configurar esta URL en el script de sheet
+      const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbySW5_e2xKB8Hx9F6t7WGQXEKa_Lqa5ToqzqgrqhFkzE-oYTrkyaKRBCv2VqbNt0UIwbA/exec"; // URL de Google Apps Script
       const dateStr = new Date().toLocaleDateString("es-AR") + " " + new Date().toLocaleTimeString("es-AR", { hour: '2-digit', minute: '2-digit' });
-      
+
       const rows = purchaseData.names.map(name => ({
-          fecha: dateStr,
-          nombre: name,
-          ciudad: purchaseData.city,
-          tipo: purchaseData.typeLabel,
-          cantidad: purchaseData.effectiveQty,
-          monto: purchaseData.totalPrice,
+        fecha: dateStr,
+        nombre: name,
+        ciudad: purchaseData.city,
+        tipo: purchaseData.typeLabel,
+        cantidad: purchaseData.effectiveQty,
+        monto: purchaseData.totalPrice,
       }));
 
       try {
-          // Cambiamos el texto del botón temporalmente para indicar que procesa
-          const btn = document.querySelector(".btn-mp");
-          if (btn) {
-              btn.innerHTML = 'Redirigiendo... ⏳';
-              btn.style.pointerEvents = 'none';
-          }
+        // Cambiamos el texto del botón temporalmente para indicar que procesa
+        const btn = document.querySelector(".btn-mp");
+        if (btn) {
+          btn.innerHTML = 'Redirigiendo... ⏳';
+          btn.style.pointerEvents = 'none';
+        }
 
-          if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL !== "PEGAR_TU_URL_AQUI") {
-              await fetch(GOOGLE_SCRIPT_URL, {
-                  method: "POST",
-                  mode: "no-cors",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ rows }),
-              });
-          } else {
-              console.warn("URL de Google Apps Script no configurada. (goToPayment)");
-          }
+        if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL !== "PEGAR_TU_URL_AQUI") {
+          await fetch(GOOGLE_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ rows }),
+          });
+        } else {
+          console.warn("URL de Google Apps Script no configurada. (goToPayment)");
+        }
       } catch (err) {
-          console.error("Error enviando datos:", err);
+        console.error("Error enviando datos:", err);
       }
 
       // Redirect to Mercado Pago (same tab so back_url works)
